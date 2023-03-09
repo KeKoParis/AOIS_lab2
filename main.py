@@ -1,14 +1,14 @@
-def solve(curr_table, curr_expression, index):
-    curr_expression = replace_negative(curr_table, curr_expression, index)
+def solve(curr_table, curr_expression, index):  # finds pcnf and pdnf
+    curr_expression = replace_negation(curr_table, curr_expression, index)
     curr_expression = replace_positive(curr_table, curr_expression, index)
     curr_expression = replace_signs(curr_expression)
 
-    curr_table[index][3] = eval(curr_expression)
+    curr_table[index][3] = eval(curr_expression)  # resolves logical expression
 
     return curr_table
 
 
-def replace_negative(curr_table, curr_expression, index):
+def replace_negation(curr_table, curr_expression, index):  # replaces negation vars to their values
     while curr_expression.find("!x1") != -1:
         curr_expression = curr_expression.replace("!x1", str(abs(curr_table[index][0] - 1)))
     while curr_expression.find("!x2") != -1:
@@ -19,7 +19,7 @@ def replace_negative(curr_table, curr_expression, index):
     return curr_expression
 
 
-def replace_positive(curr_table, curr_expression, index):
+def replace_positive(curr_table, curr_expression, index):  # replaces positive vars to their values
     while curr_expression.find("x1") != -1:
         curr_expression = curr_expression.replace('x1', str(curr_table[index][0]))
         break
@@ -31,7 +31,7 @@ def replace_positive(curr_table, curr_expression, index):
     return curr_expression
 
 
-def replace_signs(curr_expression):
+def replace_signs(curr_expression):  # replaces signs to their logical equivalent in python
     while curr_expression.find("+") != -1:
         curr_expression = curr_expression.replace("+", " or ")
     while curr_expression.find("*") != -1:
@@ -40,7 +40,7 @@ def replace_signs(curr_expression):
     return curr_expression
 
 
-def find_values_pcnf(curr_row):
+def find_values_pcnf(curr_row):  # make pcnf form out of table
     new_expression: str = ""
     number = 1
     for i in curr_row:
@@ -57,7 +57,7 @@ def find_values_pcnf(curr_row):
     return new_expression
 
 
-def find_values_pdnf(curr_row):
+def find_values_pdnf(curr_row):  # make pdnf form out of table
     new_expression: str = ""
     number = 1
     for i in curr_row:
