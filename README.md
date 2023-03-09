@@ -1,6 +1,6 @@
 <p>
     This program is written in python 3.9.<br>
-    It finds principal conjunctive normal form
+    It finds principal conjunctive normal form and
     principal disjunctive normal form for expression of three variables.
 </p>
 
