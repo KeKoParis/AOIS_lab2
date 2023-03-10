@@ -1,11 +1,34 @@
+import re
+
+
 def solve(curr_table, curr_expression, index):  # finds pcnf and pdnf
     curr_expression = replace_negation(curr_table, curr_expression, index)
     curr_expression = replace_positive(curr_table, curr_expression, index)
     curr_expression = replace_signs(curr_expression)
 
-    curr_table[index][3] = eval(curr_expression)  # resolves logical expression
+    curr_table[index][3] = solve_expr(curr_expression)  # resolves logical expression
 
     return curr_table
+
+
+def solve_sub_str(sub_str):
+    sub_str = sub_str[1:len(sub_str) - 1]
+    if sub_str[0] == '1' and sub_str[1] == 'a' and sub_str[len(sub_str) - 1] == '1':
+        return '1'
+    if (sub_str[0] == '1' or sub_str[len(sub_str) - 1] == '1') and sub_str[1] == 'o':
+        return '1'
+    return '0'
+
+
+# ((x1+x2)*x3)
+
+def solve_expr(curr_expression):
+    while re.search(r'\([01]+[or|and]+[01]+\)', curr_expression):
+        curr_expression = curr_expression.replace(re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group(),
+                                                  solve_sub_str(
+                                                      re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group()))
+
+    return curr_expression
 
 
 def replace_negation(curr_table, curr_expression, index):  # replaces negation vars to their values
@@ -33,9 +56,9 @@ def replace_positive(curr_table, curr_expression, index):  # replaces positive v
 
 def replace_signs(curr_expression):  # replaces signs to their logical equivalent in python
     while curr_expression.find("+") != -1:
-        curr_expression = curr_expression.replace("+", " or ")
+        curr_expression = curr_expression.replace("+", "or")
     while curr_expression.find("*") != -1:
-        curr_expression = curr_expression.replace("*", " and ")
+        curr_expression = curr_expression.replace("*", "and")
 
     return curr_expression
 
@@ -102,6 +125,9 @@ expression = input("Enter expression: ")
 
 for i in range(8):
     table = solve(table, expression, i)
+
+for i in table:
+    i[3] = int(i[3])
 
 for row in table:
     print(row)
