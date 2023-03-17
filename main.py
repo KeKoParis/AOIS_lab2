@@ -24,11 +24,19 @@ def solve_sub_str(sub_str):
 
 # ((x1+x2)*x3)
 
+def check_neg(expr):
+    expr = expr.replace("!0", "1")
+    expr = expr.replace("!1", "0")
+    return expr
+
+
 def solve_expr(curr_expression):
     while re.search(r'\([01]+[or|and]+[01]+\)', curr_expression):
         curr_expression = curr_expression.replace(re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group(),
                                                   solve_sub_str(
                                                       re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group()))
+
+        curr_expression = check_neg(curr_expression)
 
     return curr_expression
 
@@ -61,8 +69,6 @@ def replace_signs(curr_expression):  # replaces signs to their logical equivalen
         curr_expression = curr_expression.replace("+", "or")
     while curr_expression.find("*") != -1:
         curr_expression = curr_expression.replace("*", "and")
-    while curr_expression.find("!") != -1:
-        curr_expression = curr_expression.replace("!", "")
 
     return curr_expression
 
@@ -202,18 +208,8 @@ def main():
     for i in range(8):
         table = solve(table, expression, i)
 
-    is_reversed = 0
-    if expression[0] == '!':
-        is_reversed = 1
     for i in table:
-        if i[3] == '0':
-            if is_reversed == 1:
-                i[3] = '1'
-            i[3] = int(i[3])
-        else:
-            if is_reversed == 1:
-                i[3] = '0'
-            i[3] = int(i[3])
+        i[3] = int(i[3])
 
     for row in table:
         print(row)
@@ -231,5 +227,6 @@ def main():
     print("\n bin ", bin_pdnf)
     print("\n dec ", dec_pdnf)
     print("\n index ", convert(table))
+
 
 main()
