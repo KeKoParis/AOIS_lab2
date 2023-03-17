@@ -2,6 +2,7 @@ import re
 
 
 def solve(curr_table, curr_expression, index):  # finds pcnf and pdnf
+
     curr_expression = replace_negation(curr_table, curr_expression, index)
     curr_expression = replace_positive(curr_table, curr_expression, index)
     curr_expression = replace_signs(curr_expression)
@@ -11,6 +12,7 @@ def solve(curr_table, curr_expression, index):  # finds pcnf and pdnf
     return curr_table
 
 
+# !((x1+!x2)*(x2+!x3))
 def solve_sub_str(sub_str):
     sub_str = sub_str[1:len(sub_str) - 1]
     if sub_str[0] == '1' and sub_str[1] == 'a' and sub_str[len(sub_str) - 1] == '1':
@@ -59,6 +61,8 @@ def replace_signs(curr_expression):  # replaces signs to their logical equivalen
         curr_expression = curr_expression.replace("+", "or")
     while curr_expression.find("*") != -1:
         curr_expression = curr_expression.replace("*", "and")
+    while curr_expression.find("!") != -1:
+        curr_expression = curr_expression.replace("!", "")
 
     return curr_expression
 
@@ -114,11 +118,10 @@ def conv_bin(expr):
 
 def conv_dec(curr_row):
     dec = 0
-    for i in range(len(curr_row) - 1):
-        print(curr_row[i])
+    for i in range(len(curr_row)):
         dec += int(curr_row[i]) * (2 ** (3 - i - 1))
-    print("dec ", str(dec))
-    return str(dec)
+
+    return str(int(dec))
 
 
 def convert(curr_table):
@@ -170,14 +173,13 @@ def build_pcnf(curr_table):
             bin_pcnf += " "
             dec_pcnf += conv_dec(row) + " "
 
-    return pcnf, dec_pcnf, bin_pcnf
+    return pcnf, bin_pcnf, dec_pcnf
 
 
 def build_pdnf(curr_table):
     pdnf: str = ""
     bin_pdnf = ""
     dec_pdnf = ""
-    curr_pdnf = ""
     for row in curr_table:
         if row[3] == 1:
             pdnf += "("
@@ -197,12 +199,21 @@ def main():
     table = fill_table(table)
 
     expression = input("Enter expression: ")
-
     for i in range(8):
         table = solve(table, expression, i)
 
+    is_reversed = 0
+    if expression[0] == '!':
+        is_reversed = 1
     for i in table:
-        i[3] = int(i[3])
+        if i[3] == '0':
+            if is_reversed == 1:
+                i[3] = '1'
+            i[3] = int(i[3])
+        else:
+            if is_reversed == 1:
+                i[3] = '0'
+            i[3] = int(i[3])
 
     for row in table:
         print(row)
@@ -220,6 +231,5 @@ def main():
     print("\n bin ", bin_pdnf)
     print("\n dec ", dec_pdnf)
     print("\n index ", convert(table))
-
 
 main()
