@@ -121,6 +121,19 @@ def conv_bin(expr):
             bin_exp += "0"
     return bin_exp
 
+def conv_bin_pdnf(expr):
+    bin_exp = ""
+    c = 0
+    for i in range(len(expr)):
+        if c == 1:
+            c = 0
+            continue
+        if expr[i] == "!":
+            c = 1
+            bin_exp += "0"
+        if expr[i] == "x":
+            bin_exp += "1"
+    return bin_exp
 
 def conv_dec(curr_row):
     dec = 0
@@ -191,9 +204,9 @@ def build_pdnf(curr_table):
             pdnf += "("
             pdnf += find_values_pdnf(row)
             pdnf += ")+"
-            bin_pdnf += conv_bin(find_values_pdnf(row))
+            bin_pdnf += conv_bin_pdnf(find_values_pdnf(row))
             bin_pdnf += " "
-            curr_pdnf = conv_bin(find_values_pdnf(row))
+            curr_pdnf = conv_bin_pdnf(find_values_pdnf(row))
             dec_pdnf += conv_dec(curr_pdnf) + " "
 
     return pdnf, bin_pdnf, dec_pdnf
