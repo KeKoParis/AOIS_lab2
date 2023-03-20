@@ -32,6 +32,7 @@ def check_neg(expr):
 
 def solve_expr(curr_expression):
     while re.search(r'\([01]+[or|and]+[01]+\)', curr_expression):
+        curr_expression = check_neg(curr_expression)
         curr_expression = curr_expression.replace(re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group(),
                                                   solve_sub_str(
                                                       re.search(r'\([01]+[or|and]+[01]+\)', curr_expression).group()))
