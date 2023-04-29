@@ -30,6 +30,7 @@ def check_neg(expr):
     return expr
 
 
+# (((x1+!x2)*x3)+(x3*!x2))
 def solve_expr(curr_expression):
     while re.search(r'\([01]+[or|and]+[01]+\)', curr_expression):
         curr_expression = check_neg(curr_expression)
@@ -110,31 +111,33 @@ def find_values_pdnf(curr_row):  # make pdnf form out of table
 
 def conv_bin(expr):
     bin_exp = ""
-    c = 0
+    check_negative = 0
     for i in range(len(expr)):
-        if c == 1:
-            c = 0
+        if check_negative == 1:
+            check_negative = 0
             continue
         if expr[i] == "!":
-            c = 1
+            check_negative = 1
             bin_exp += "1"
         if expr[i] == "x":
             bin_exp += "0"
     return bin_exp
 
+
 def conv_bin_pdnf(expr):
     bin_exp = ""
-    c = 0
+    check_negative = 0
     for i in range(len(expr)):
-        if c == 1:
-            c = 0
+        if check_negative == 1:
+            check_negative = 0
             continue
         if expr[i] == "!":
-            c = 1
+            check_negative = 1
             bin_exp += "0"
         if expr[i] == "x":
             bin_exp += "1"
     return bin_exp
+
 
 def conv_dec(curr_row):
     dec = 0
@@ -155,17 +158,17 @@ def convert(curr_table):
 
 
 def fill_table(curr_table):
-    check = 0
+    is_another_number = 0
     for i in range(8):
         if i < 4:
             curr_table[i][0] = 0
         else:
             curr_table[i][0] = 1
 
-        if check == 4:
-            check = 0
+        if is_another_number == 4:
+            is_another_number = 0
 
-        if check < 2:
+        if is_another_number < 2:
             curr_table[i][1] = 0
         else:
             curr_table[i][1] = 1
@@ -175,7 +178,7 @@ def fill_table(curr_table):
         else:
             curr_table[i][2] = 1
 
-        check = check + 1
+        is_another_number = is_another_number + 1
 
     return curr_table
 
@@ -219,6 +222,7 @@ def main():
     table = fill_table(table)
 
     expression = input("Enter expression: ")
+
     for i in range(8):
         table = solve(table, expression, i)
 
